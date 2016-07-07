@@ -1,0 +1,66 @@
+//一道DP题目，需要先进行一点数学推导，可以得出value为(n+m-1)*s1-s2，s1表示ai的平方的和，s2表示ai的和的平方。
+//ai的和不超过59*30，在和一定的情况下，s1越小，value越小。
+//设计状态为dp[i][j][k]，表示ai的和为k时，s1的最小值。
+//最小的value即为枚举k的取值，找到最小的(n+m-1)*dp[n][m][k]-k*k
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+const int MAXN = 32;
+const int MAX = 1800;
+int mp[MAXN][MAXN];
+int dp[MAXN][MAXN][MAX];
+int main()
+{
+    int T,cas=1,n,m,i,j,k;
+    scanf("%d",&T);
+    for (cas = 1; cas <= T; ++cas)
+    {
+        memset(dp,-1,sizeof(dp));
+        scanf("%d %d",&n,&m);
+        for (i = 1; i <= n; ++i)
+            for (j = 1; j <= m; ++j)
+                scanf("%d",&mp[i][j]);
+
+        int sum = mp[1][1];
+        dp[1][1][sum] = sum*sum;
+        for (i = 1; i <= n; ++i)
+        {
+            for (j = 1; j <= m; ++j)
+            {
+                int num = mp[i][j];
+                int sqr = num*num;
+                for (k = num; k <= MAX; ++k)
+                {
+                    if (i > 1 && dp[i-1][j][k-num] > -1)
+                    {
+                        if (dp[i][j][k] == -1)
+                            dp[i][j][k] = dp[i-1][j][k-num] + sqr;
+                        else
+                            dp[i][j][k] = min(dp[i][j][k], dp[i-1][j][k-num]+sqr);
+                    }
+                    if (j > 1 && dp[i][j-1][k-num] > -1)
+                    {
+                        if (dp[i][j][k] == -1)
+                            dp[i][j][k] = dp[i][j-1][k-num] + sqr;
+                        else
+                            dp[i][j][k] = min(dp[i][j][k], dp[i][j-1][k-num]+sqr);
+                    }
+                }
+            }
+        }
+        int ans = -1;
+        for (k = 0; k < MAX; ++k)
+        {
+            if (dp[n][m][k] == -1)
+                continue;
+            int tmp = (n+m-1) * dp[n][m][k] - k*k;
+            if (ans == -1)
+                ans = tmp;
+            else
+                ans = min(ans, tmp);
+        }
+        printf("Case #%d: %d\n",cas,ans);
+    }
+    return 0;
+}
