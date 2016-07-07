@@ -1,0 +1,55 @@
+//难度：易
+//构造题，看懂三个样例，基本就能想出做法了。从D开始一个一个加可能会超时。
+//思路：先把D化为二进制数，从最低位往高位数，第一次遇到0就把这个0变成1，然后从这位开始往低位走，把1变成0（在保证L不小于s1的情况下）
+//注意样例2的情况，可能出现上面的操作完后，L会超过s2，这时就要重复上面的操作。
+#include <cstdio>
+#include <cstring>
+using namespace std;
+typedef long long lint;
+const int MAXN = 35;
+int bit[MAXN];
+int d,s1,s2,l,n;
+void inc()
+{
+    int i;
+    for (i = 0; i < n; ++i)
+        if (bit[i] == 0)
+            break;
+    if (i == n)
+        ++n;
+    ++l;
+    int t = i;
+    bit[t] = 1;
+    for (i = t-1; i >= 0 && l > s1; --i,--l)
+        bit[i] = 0;
+}
+int main()
+{
+    int T,cas,i;
+    scanf("%d",&T);
+    for (cas = 1; cas <= T; ++cas)
+    {
+        scanf("%d %d %d",&d,&s1,&s2);
+        l = 0;
+        i = 0;
+        while (d)
+        {
+            bit[i] = d % 2;
+            if (bit[i] == 1)
+                ++l;
+            ++i;
+            d /= 2;
+        }
+        n = i;
+        do{
+            inc();
+        }while(l > s2);
+        lint ans = 0;
+        for (i = n-1; i >= 0; --i)
+        {
+            ans = ans*2 + bit[i];
+        }
+        printf("Case #%d: %lld\n",cas,ans);
+    }
+    return 0;
+}
