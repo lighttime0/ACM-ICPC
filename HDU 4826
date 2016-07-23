@@ -1,0 +1,38 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+const int MAXN = 105;
+const int INF = 1<<29;
+int mat[MAXN][MAXN];
+//一道比较简单的DP
+//看清题目，不能往走左，那就可以从左往右一列一列处理了，到达一个格子，要么从上边来，要么从下边来，要么从左边来。
+//核心代码只有六行，看代码就行。
+int dp_up[MAXN],dp_down[MAXN];
+int main()
+{    
+    int T,cas,m,n,i,j;
+    scanf("%d",&T);
+    for (cas = 1; cas <= T; ++cas)
+    {
+        scanf("%d %d",&m,&n);
+        for (i = 1; i <= m; ++i)
+            for (j = 1; j <= n; ++j)
+                scanf("%d",&mat[i][j]);
+        for (i = 2; i <= m; ++i)
+            mat[i][1] += mat[i-1][1];
+        for (j = 2; j <= n; ++j)
+        {
+            dp_down[0] = dp_up[m+1] = -INF;
+            for (i = 1; i <= m; ++i)
+                dp_down[i] = max(dp_down[i-1],mat[i][j-1]) + mat[i][j];
+            for (i = m; i >= 1; --i)
+                dp_up[i] = max(dp_up[i+1],mat[i][j-1]) + mat[i][j];
+            for (i = 1; i <= m; ++i)
+                mat[i][j] = max(dp_up[i],dp_down[i]);
+        }
+        printf("Case #%d:\n%d\n",cas,mat[1][n]);
+    }
+
+    return 0;
+}
