@@ -1,7 +1,7 @@
 //一道DP题目，需要先进行一点数学推导，可以得出value为(n+m-1)*s1-s2，s1表示ai的平方的和，s2表示ai的和的平方。
 //ai的和不超过59*30，在和一定的情况下，s1越小，value越小。
 //设计状态为dp[i][j][k]，表示ai的和为k时，s1的最小值。
-//最小的value即为枚举k的取值，找到最小的(n+m-1)*dp[n][m][k]-k*k
+//最小的value即为枚举k的取值，找到最小的(n+m-1)*dp[n][m][k]-k*k.
 #include <cstdio>
 #include <algorithm>
 #include <cstring>
