@@ -1,0 +1,80 @@
+//自己的概统学的挺渣的，居然一开始懵了，开始用乘法分情况讨论……
+//其实吗，在已经找到k种coupon的基础上，找到一种新的概率是(n-k)/n，期望次数则为n/(n-k)
+//那么就简单了……注意用64位整数，每一轮循环后都要约分，最后还要约分，保证最简分数
+
+#include <cstdio>
+#include <cstring>
+using namespace std;
+typedef long long lint;
+lint gcd(lint a,lint b)
+{
+	return b==0?a:gcd(b,a%b);
+}
+lint lcm(lint a,lint b)
+{
+	return a*b/gcd(a,b);
+}
+void print(lint num, lint fenmu, lint fenzi)
+{
+	if (fenzi == 0)
+		printf("%d\n",num);
+	else
+	{
+		lint cd = gcd(fenmu,fenzi);
+		fenzi /= cd;
+		fenmu /= cd;
+		int i, len1=0, len2=0;
+		lint tmp=num;
+		while (tmp)
+		{
+			++len1;
+			tmp /= 10;
+		}
+		tmp = fenmu;
+		while (tmp)
+		{
+			++len2;
+			tmp /= 10;
+		}
+		for (i = 0; i <= len1; ++i)
+			printf(" ");
+		printf("%lld\n%lld ",fenzi,num);
+		for (i = 0; i < len2; ++i)
+			printf("-");
+		printf("\n");
+		for (i = 0; i <= len1; ++i)
+			printf(" ");
+		printf("%lld\n",fenmu);
+	}
+}
+int main()
+{
+	int n,i;
+	lint fenmu, fenzi;
+	lint num=0;
+	while (scanf("%d",&n) != EOF) 
+	{
+		num = 0;
+		fenmu=1;
+		fenzi=0;
+		lint cnt_fenzi = n;
+		lint cnt_fenmu = n;
+		for (i = 0; i < n; ++i)
+		{
+			lint tmp = lcm(cnt_fenmu,fenmu);
+			fenzi *= (tmp/fenmu);
+			fenzi += (tmp/cnt_fenmu*cnt_fenzi);
+			fenmu = tmp;
+			if (fenzi >= fenmu)
+			{
+				num += fenzi/fenmu;
+				fenzi = fenzi % fenmu;
+			}
+			if (fenzi == 0)
+				fenmu = 1;
+			--cnt_fenmu;
+		}
+		print(num,fenmu,fenzi);
+	}
+	return 0;
+}
